@@ -1,9 +1,11 @@
 import { createClient, type SupabaseClient, type User } from 'npm:@supabase/supabase-js@2.112.2'
 import { ZodError, type ZodType } from 'npm:zod@3.24.2'
 
+const appOrigin = Deno.env.get('APP_URL')?.replace(/\/+$/, '')
+
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': Deno.env.get('APP_URL') ?? '*',
-  'Access-Control-Allow-Headers': 'authorization, apikey, content-type',
+  'Access-Control-Allow-Origin': appOrigin || '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Content-Type': 'application/json; charset=utf-8',
 }
