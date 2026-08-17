@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "2.112.2",
+    "@vercel/analytics": "^2.0.1",
     "@vitejs/plugin-react": "latest",
     "jspdf": "4.2.1",
     "jspdf-autotable": "5.0.8",
