@@ -18,13 +18,27 @@ Deno.serve(async (request) => {
     const { client, user } = await userClient(request)
     const { data: profile, error: profileError } = await client
       .from('profiles')
-      .select('customer_id, role')
+      .select('customer_id, role, access_status')
       .eq('id', user.id)
       .single()
     if (profileError || profile?.role !== 'customer' || !profile.customer_id) {
       throw new HttpError(403, 'Esta cuenta no está asociada a una panadería cliente.')
     }
     const customerId = profile.customer_id
+
+    if (profile.access_status !== 'active') {
+      throw new HttpError(403, profile.access_status === 'pending'
+        ? 'Terminá de activar tu cuenta antes de continuar.'
+        : 'Tu acceso fue suspendido. Contactá a Seven Pan.')
+    }
+
+    const { data: account, error: accountError } = await client
+      .from('customers')
+      .select('is_active')
+      .eq('id', customerId)
+      .single()
+    if (accountError) throw accountError
+    if (!account.is_active) throw new HttpError(403, 'Tu cuenta está pausada. Contactá a Seven Pan.')
 
     if (request.method === 'GET') {
       const { data, error } = await client.from('customers').select('*').eq('id', customerId).single()

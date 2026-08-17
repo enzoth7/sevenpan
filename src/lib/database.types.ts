@@ -17,9 +17,11 @@ export type Database = {
       customers: {
         Row: {
           address_line_1: string
+          archived_at: string | null
           city: string
           color: string
           created_at: string
+          customer_code: string
           delivery_notes: string | null
           id: string
           initials: string
@@ -32,9 +34,11 @@ export type Database = {
         }
         Insert: {
           address_line_1?: string
+          archived_at?: string | null
           city?: string
           color?: string
           created_at?: string
+          customer_code: string
           delivery_notes?: string | null
           id?: string
           initials: string
@@ -47,9 +51,11 @@ export type Database = {
         }
         Update: {
           address_line_1?: string
+          archived_at?: string | null
           city?: string
           color?: string
           created_at?: string
+          customer_code?: string
           delivery_notes?: string | null
           id?: string
           initials?: string
@@ -59,6 +65,78 @@ export type Database = {
           phone?: string
           slug?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      customer_activation_challenges: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          issued_by: string | null
+          purpose: string
+          profile_id: string | null
+          request_fingerprint: string | null
+          secret_hash: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          issued_by?: string | null
+          purpose?: string
+          profile_id?: string | null
+          request_fingerprint?: string | null
+          secret_hash: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          issued_by?: string | null
+          purpose?: string
+          profile_id?: string | null
+          request_fingerprint?: string | null
+          secret_hash?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_activation_challenges_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_activation_challenges_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_access_attempts: {
+        Row: {
+          created_at: string
+          id: number
+          request_fingerprint: string
+          successful: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          request_fingerprint: string
+          successful?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          request_fingerprint?: string
+          successful?: boolean
         }
         Relationships: []
       }
@@ -241,6 +319,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_status: string
+          activated_at: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           customer_id: string | null
           full_name: string | null
@@ -249,6 +331,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          access_status?: string
+          activated_at?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           customer_id?: string | null
           full_name?: string | null
@@ -257,6 +343,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          access_status?: string
+          activated_at?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           customer_id?: string | null
           full_name?: string | null
@@ -308,6 +398,23 @@ export type Database = {
       advance_order_status: {
         Args: { p_actor_id: string; p_next_status: string; p_order_id: string }
         Returns: undefined
+      }
+      complete_customer_activation: {
+        Args: { p_profile_id: string; p_secret_hash: string }
+        Returns: boolean
+      }
+      redeem_customer_access_code: {
+        Args: {
+          p_contact_email: string
+          p_customer_code: string
+          p_purpose: string
+          p_secret_hash: string
+        }
+        Returns: {
+          access_status: string
+          challenge_id: string
+          profile_id: string
+        }[]
       }
       cancel_pending_order: {
         Args: { p_actor_id: string; p_order_id: string }

@@ -4,13 +4,18 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 4173",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:schedule": "node scripts/test-order-schedule.mjs",
+    "test:access": "node scripts/test-customer-access.mjs && node scripts/test-manual-access-code.mjs",
+    "report:sample": "node scripts/generate-production-report-sample.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.112.2",
     "@vitejs/plugin-react": "latest",
+    "jspdf": "4.2.1",
+    "jspdf-autotable": "5.0.8",
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",

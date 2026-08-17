@@ -6,3 +6,8 @@ dist/
 .agents/
 skills-lock.json
 supabase/.temp/
+
+.vercel
+.env*.local
+/output/
+/tmp/
